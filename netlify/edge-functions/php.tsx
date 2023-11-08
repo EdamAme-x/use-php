@@ -1,29 +1,12 @@
-/** @jsx h */
-/** @jsxFrag Fragment */
-import { h, renderToString } from "https://deno.land/x/jsx/mod.ts";
-import { usePHP } from "../../lib/usephp.tsx";
+import { renderToString } from "https://deno.land/x/jsx/mod.ts";
+import { Home } from "./home.tsx";
 
 export default async function handler(request: Request) {
-  const php = await usePHP(request, h);
   return new Response(
     await renderToString(
-      <html>
-        <head>
-          <title>Use PHP</title>
-        </head>
-        <body>
-          {await php`
-            Hello
-            <?php
-              echo 1;
-              print("<h1>hello</h1>");
-            ?>
-            <div>
-              <?php phpinfo(); ?>
-            </div>
-          `}
-        </body>
-      </html>
+      await Home({
+        request: request
+      })
     ),
     {
       headers: {
@@ -37,3 +20,6 @@ export const config = {
   path: "/*",
   excluded_paths: "/public/*",
 };
+
+// Debug
+Deno.serve(handler)
